@@ -408,10 +408,11 @@ script:
           LabelPosition left;
           LabelPosition right;
           if (current_page_id == get_page_id("home")) {
-            background = "pic_background_main";
+            background = "home.pic";  // Rounded 2: home has its own background picture
             fill = XSTR_FILL_CROP_IMAGE;
-            left = is_eu ? LabelPosition{47, 286} : LabelPosition{16, 446};
-            right = is_eu ? LabelPosition{288, 286} : LabelPosition{184, 446};
+            // Rounded 2: EU labels centred in the pills of the home background (y 266-318)
+            left = is_eu ? LabelPosition{47, 280} : LabelPosition{16, 446};
+            right = is_eu ? LabelPosition{288, 280} : LabelPosition{184, 446};
           } else if (current_page_id == get_page_id("screensaver")) {
             background = "screensaver_bco";
             fill = XSTR_FILL_SOLID_COLOR;

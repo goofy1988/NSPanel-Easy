@@ -20,25 +20,57 @@ static const char *const TAG = "nspanel.chips";
 ChipState chip_states[CHIP_COUNT] = {};
 bool chips_mirror_page = false;
 
+// Rounded 2: visible chips are packed to the left, so a hidden chip leaves no gap.
+// Display slot n shows the n-th visible chip; the slot cache skips redundant writes.
+struct ChipSlot {
+  char icon[4];
+  uint16_t color;
+};
+static ChipSlot chip_slots[CHIP_COUNT] = {};
+static bool chip_slots_valid = false;
+
+static void chip_slot_set(uint8_t slot, const char *icon, uint16_t color) {
+  ChipSlot &the_slot = chip_slots[slot];
+  const bool show = icon[0] != '\0';
+  if (chip_slots_valid && strcmp(the_slot.icon, icon) == 0 && (!show || the_slot.color == color)) {
+    return;  // Slot already shows this chip
+  }
+
+  nextion_display->set_component_text(CHIP_NAMES_HOME[slot], icon);
+  if (show) {
+    nextion_display->set_component_font_color(CHIP_NAMES_HOME[slot], color);
+  }
+  if (chips_mirror_page) {
+    nextion_display->set_component_text(CHIP_NAMES[slot], icon);
+    if (show) {
+      nextion_display->set_component_font_color(CHIP_NAMES[slot], color);
+    }
+  }
+
+  strncpy(the_slot.icon, icon, sizeof(the_slot.icon) - 1);
+  the_slot.icon[sizeof(the_slot.icon) - 1] = '\0';
+  the_slot.color = color;
+}
+
+void chips_invalidate() { chip_slots_valid = false; }
+
 void chip_render(uint8_t idx) {
   if (idx >= CHIP_COUNT || nextion_display == nullptr) {
     return;
   }
 
-  const ChipState &the_chip = chip_states[idx];
-  const char *text = the_chip.visible ? the_chip.icon : "";
-
-  nextion_display->set_component_text(CHIP_NAMES_HOME[idx], text);
-  if (the_chip.visible) {
-    nextion_display->set_component_font_color(CHIP_NAMES_HOME[idx], the_chip.color);
-  }
-
-  if (chips_mirror_page) {
-    nextion_display->set_component_text(CHIP_NAMES[idx], text);
-    if (the_chip.visible) {
-      nextion_display->set_component_font_color(CHIP_NAMES[idx], the_chip.color);
+  // Any chip change can shift the ones to its right, so the whole row is laid out again
+  uint8_t slot = 0;
+  for (uint8_t i = 0; i < CHIP_COUNT; ++i) {
+    const ChipState &the_chip = chip_states[i];
+    if (the_chip.visible && the_chip.icon[0] != '\0') {
+      chip_slot_set(slot++, the_chip.icon, the_chip.color);
     }
   }
+  for (; slot < CHIP_COUNT; ++slot) {
+    chip_slot_set(slot, "", 0);
+  }
+  chip_slots_valid = true;
 }
 
 #ifdef NSPANEL_EASY_SUBSCRIBE

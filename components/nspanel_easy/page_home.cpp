@@ -234,7 +234,12 @@ void home_weather_resolve() {
   // is_new_device is always false: the "Easy" TFT project is abandoned.
   const WeatherPicVariant &variant =
       select_weather_variant(get_weather_pics(weather_condition_index), false, current_theme != ThemeMode::LIGHT);
-  const uint16_t pic = sun_info.is_up ? variant.sun_up : variant.sun_down;
+  uint16_t pic = sun_info.is_up ? variant.sun_up : variant.sun_down;
+  // Rounded 2: home has its own copies of the legacy dark pictures, drawn opaque on the weather card
+  static constexpr uint16_t HOME_WEATHER_PIC_OFFSET = 134;
+  if (current_theme != ThemeMode::LIGHT && pic >= 1 && pic <= 15) {
+    pic += HOME_WEATHER_PIC_OFFSET;
+  }
 
   // Index 0 resolves to a blank picture in both themes, so an unknown or
   // not-yet-received condition needs no visibility handling of its own.

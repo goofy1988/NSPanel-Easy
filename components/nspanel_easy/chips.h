@@ -146,6 +146,9 @@ inline uint8_t find_chip_index(const std::string &name) { return find_chip_index
  */
 void chip_render(uint8_t idx);
 
+/// @brief Forget what the display shows, so the next chip_render() rewrites every slot.
+void chips_invalidate();
+
 #ifdef NSPANEL_EASY_SUBSCRIBE
 
 /**
