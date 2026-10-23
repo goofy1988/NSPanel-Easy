@@ -480,8 +480,8 @@ script:
           static const char *const HOME_CROPPED[] = {
               "time", "date", "outdoor_temp", "indr_temp", "indr_temp_icon", "meridiem",
               "left_bt_text", "right_bt_text", "wifi_icon", "bt_icon",
-              "value01", "value01_icon", "value02", "value02_icon",
-              "value03", "value03_icon", "value04", "value04_icon",
+              "value01", "value01_icon", "value01_label", "value02", "value02_icon", "value02_label",
+              "value03", "value03_icon", "value03_label", "value04", "value04_icon", "value04_label",
               "chip_relay1", "chip_relay2", "chip_climate",
               "chip01", "chip02", "chip03", "chip04", "chip05", "chip06", "chip07",
               "bt_notific", "bt_utilities", "bt_entities", "bt_qrcode",

@@ -54,6 +54,9 @@ static void chip_slot_set(uint8_t slot, const char *icon, uint16_t color) {
 
 void chips_invalidate() { chip_slots_valid = false; }
 
+// mdi:blank / mdi:void arrive as U+FFFF (UTF-8 EF BF BF): drawn empty, so they take no slot
+static bool chip_icon_blank(const char *icon) { return strcmp(icon, "\xEF\xBF\xBF") == 0; }
+
 void chip_render(uint8_t idx) {
   if (idx >= CHIP_COUNT || nextion_display == nullptr) {
     return;
@@ -63,7 +66,7 @@ void chip_render(uint8_t idx) {
   uint8_t slot = 0;
   for (uint8_t i = 0; i < CHIP_COUNT; ++i) {
     const ChipState &the_chip = chip_states[i];
-    if (the_chip.visible && the_chip.icon[0] != '\0') {
+    if (the_chip.visible && the_chip.icon[0] != '\0' && !chip_icon_blank(the_chip.icon)) {
       chip_slot_set(slot++, the_chip.icon, the_chip.color);
     }
   }

@@ -98,8 +98,8 @@ script:
                                                                   id(units_separator).c_str());
           #else
           // Celsius with one decimal
-          snprintf(buffer, sizeof(buffer), "%.1f%s${temp_units}", temp_nspanel->state,
-                                                                  id(units_separator).c_str());
+          // Rounded 2: like the HA dashboard, "21,8° innen"
+          snprintf(buffer, sizeof(buffer), "%.1f\u00b0 innen", temp_nspanel->state);
           #endif
 
           disp1->set_component_text(hmi::home::INDR_TEMP.name,

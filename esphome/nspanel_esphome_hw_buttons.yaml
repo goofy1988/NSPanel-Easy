@@ -207,6 +207,13 @@ script:
                                             current_page_id == get_page_id("confirm") or
                                             current_page_id == get_page_id("keyb_num") or
                                             current_page_id == get_page_id("screensaver");
+              if (display_mode_index == 0 and current_page_id == get_page_id("home")) {
+                // Rounded 2: the pills show the state on home, reset both to the normal background
+                disp1->send_command("xpic 17,268,180,50,17,268,home.pic");
+                disp1->send_command("xpic 258,268,180,50,258,268,home.pic");
+                refresh_hardware_buttons_labels->execute(false);
+                return;
+              }  // if (EU home page)
               for (const HwButtonBarArea &area : HW_BUTTON_BAR_AREAS[display_mode_index]) {
                 if (solid_background) {
                   disp1->send_command_printf("fill %" PRIu16 ",%" PRIu16 ",%" PRIu16 ",%" PRIu16 ",%s.bco", area.x,
@@ -360,6 +367,36 @@ script:
             }  // if (area.is_vertical())
           };
 
+            // Rounded 2: on the EU home page the whole pill shows the state instead of the bar. It is copied
+            // from the active (picture 150) or the normal (home.pic) background, then the labels are redrawn.
+            static constexpr uint8_t HOME_PILL_ON_PIC = 150;
+            struct HomePill {
+              uint16_t x, y, w, h;
+            };
+            static constexpr HomePill HOME_PILLS[2] = {{17, 268, 180, 50}, {258, 268, 180, 50}};
+            auto draw_home_pill = [](const HomePill &pill, bool on) {
+              char pic[12];
+              if (on) {
+                snprintf(pic, sizeof(pic), "%" PRIu8, HOME_PILL_ON_PIC);
+              } else {
+                snprintf(pic, sizeof(pic), "home.pic");
+              }
+              disp1->send_command_printf("xpic %" PRIu16 ",%" PRIu16 ",%" PRIu16 ",%" PRIu16 ",%" PRIu16 ",%" PRIu16 ",%s",
+                                         pill.x, pill.y, pill.w, pill.h, pill.x, pill.y, pic);
+            };
+            if (display_mode_idx == 1 and current_page_id == get_page_id("home")) {
+              if (button_mask & 1) {
+                draw_home_pill(HOME_PILLS[0], id(hardware_settings).button_left_enabled and
+                                                  id(hardware_settings).button_left_state);
+              }
+              if (button_mask & 2) {
+                draw_home_pill(HOME_PILLS[1], id(hardware_settings).button_right_enabled and
+                                                  id(hardware_settings).button_right_state);
+              }
+              refresh_hardware_buttons_labels->execute(false);  // xpic painted over them
+              return;
+            }  // if (EU home page)
+
           // Left button
           if (button_mask & 1 and id(hardware_settings).button_left_enabled) {
             const uint16_t button_bar_left_color = id(hardware_settings).button_left_state
@@ -475,7 +512,17 @@ script:
           };
           // An empty text only repaints the background, clearing the labels
           static const std::string NO_LABEL;
+          // Rounded 2: on the EU home page an active button's label sits on the tinted pill of picture 150
+          const bool home_pills = is_eu and current_page_id == get_page_id("home");
+          const char *const page_background = background;
+          if (home_pills and id(hardware_settings).button_left_enabled and id(hardware_settings).button_left_state) {
+            background = "150";
+          }
           draw_label(left, show ? id(button_left_label) : NO_LABEL, color_left);
+          background = page_background;
+          if (home_pills and id(hardware_settings).button_right_enabled and id(hardware_settings).button_right_state) {
+            background = "150";
+          }
           draw_label(right, show ? id(button_right_label) : NO_LABEL, color_right);
 
   - id: !extend page_change

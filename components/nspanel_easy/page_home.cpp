@@ -280,13 +280,21 @@ static void home_weather_render(const char *state) {
  * @param out Destination buffer.
  * @param size Size of the destination buffer.
  */
-static void format_temperature(float value, char *out, size_t size) {
+// Rounded 2: decimals and suffix per component, Celsius without the "C"
+static void format_temperature(float value, int decimals, const char *suffix, char *out, size_t size) {
   char buffer[TEMP_TEXT_LEN];
   const char *separator = (units_separator_str != nullptr) ? units_separator_str->c_str() : "";
 #if NSPANEL_EASY_HW_TEMPERATURE_IS_FAHRENHEIT
   snprintf(buffer, sizeof(buffer), "%.0f%s\u00b0F", value, separator);
 #else   // Celsius
-  snprintf(buffer, sizeof(buffer), "%.1f%s\u00b0C", value, separator);
+  (void) separator;
+  if (decimals == 0) {
+    value = roundf(value);
+    if (value == 0.0f) {
+      value = 0.0f;  // -0.3 rounds to -0; show "0°"
+    }
+  }
+  snprintf(buffer, sizeof(buffer), "%.*f\u00b0%s", decimals, value, suffix);
 #endif  // NSPANEL_EASY_HW_TEMPERATURE_IS_FAHRENHEIT
 
   // Guarded indexing: an empty separator would be undefined behaviour here.
@@ -328,7 +336,7 @@ static void home_indoor_temp_render(const char *state) {
 
   indoor_temp_valid = true;
   char text[TEMP_TEXT_LEN];
-  format_temperature(*value, text, sizeof(text));
+  format_temperature(*value, 1, " innen", text, sizeof(text));
   if (strcmp(indoor_temp_text, text) == 0) {
     return;  // Nothing changed; avoid a redundant Nextion write
   }
@@ -373,7 +381,7 @@ static void home_outdoor_temp_render(const char *state) {
 
   if (visible) {
     char text[TEMP_TEXT_LEN];
-    format_temperature(*value, text, sizeof(text));
+    format_temperature(*value, 0, "", text, sizeof(text));
     if (strcmp(outdoor_temp_text, text) != 0) {
       strncpy(outdoor_temp_text, text, sizeof(outdoor_temp_text) - 1);
       outdoor_temp_text[sizeof(outdoor_temp_text) - 1] = '\0';
