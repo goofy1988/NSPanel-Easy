@@ -106,4 +106,25 @@ sub('esphome/nspanel_esphome_hw_buttons.yaml', '''            background = "pic_
             // Rounded 2: EU labels centred in the pills of the home background (y 266-318)
             left = is_eu ? LabelPosition{47, 280} : LabelPosition{16, 446};
             right = is_eu ? LabelPosition{288, 280} : LabelPosition{184, 446};''')
+sub('esphome/nspanel_esphome_hw_display.yaml', '''          disp1->send_command("call theme_apply");
+''', '''          disp1->send_command("call theme_apply");
+          // Rounded 2: theme_apply points home at pic_background_main; home has its own background
+          static const char *const HOME_CROPPED[] = {
+              "time", "date", "outdoor_temp", "indr_temp", "indr_temp_icon", "meridiem",
+              "left_bt_text", "right_bt_text", "wifi_icon", "bt_icon",
+              "value01", "value01_icon", "value02", "value02_icon",
+              "value03", "value03_icon", "value04", "value04_icon",
+              "chip_relay1", "chip_relay2", "chip_climate",
+              "chip01", "chip02", "chip03", "chip04", "chip05", "chip06", "chip07",
+              "bt_notific", "bt_utilities", "bt_entities", "bt_qrcode",
+              "button01", "button02", "button03", "button04", "button05", "button06", "button07"};
+          static constexpr uint8_t HOME_BACKGROUND_PIC = 134;
+          disp1->send_command_printf("home.pic=%" PRIu8, HOME_BACKGROUND_PIC);
+          for (const char *name : HOME_CROPPED) {
+            disp1->send_command_printf("home.%s.picc=%" PRIu8, name, HOME_BACKGROUND_PIC);
+          }
+          #ifdef NSPANEL_EASY_USE_WEATHER
+          home_weather_resolve();  // theme_apply shifted the home weather picture by 48
+          #endif  // NSPANEL_EASY_USE_WEATHER
+''')
 print("ok")
