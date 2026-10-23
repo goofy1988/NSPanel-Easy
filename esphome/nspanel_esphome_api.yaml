@@ -113,11 +113,12 @@ api:
             }  // if (page == "mem" && id == "details_overlap")
 
             // Rounded 2: "value|caption" on a home value tile also fills its caption valueNN_label
-            if (page == "home" && id.size() == 7 && id.rfind("value0", 0) == 0 && id[6] >= '1' && id[6] <= '4') {
+            if (page == "home" && (id == "value01" || id == "value02" || id == "value03" || id == "value04")) {
               const std::string &last = txt_list.back();
               const size_t bar = last.find('|');
               if (bar != std::string::npos) {
-                action_component_text->execute(std::string("home"), id + "_label", last.substr(bar + 1));
+                action_component_text->execute(std::string("home"), std::string(id.c_str()) + "_label",
+                                               last.substr(bar + 1));
                 action_component_text_list->execute(page.c_str(), id.c_str(),
                                                     std::vector<std::string>{last.substr(0, bar)});
                 return;
