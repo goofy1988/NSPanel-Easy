@@ -339,4 +339,31 @@ time:
         seconds: 0
         then:
           - script.execute: sun_state_update
+
+display:
+  - id: !extend disp1
+    on_touch:
+      then:
+        - lambda: |-
+            // Rounded 2: a tap on a home tile (value or icon) is reported to Home Assistant
+            if (touch_event or page_id != get_page_id("home")) return;
+            static const struct {
+              uint8_t value_id, icon_id;
+              const char *name;
+            } tiles[] = {
+              {hmi::home::VALUE01.id, hmi::home::VALUE01_ICON.id, "value01"},
+              {hmi::home::VALUE02.id, hmi::home::VALUE02_ICON.id, "value02"},
+              {hmi::home::VALUE03.id, hmi::home::VALUE03_ICON.id, "value03"},
+              {hmi::home::VALUE04.id, hmi::home::VALUE04_ICON.id, "value04"},
+            };
+            for (const auto &tile : tiles) {
+              if (component_id == tile.value_id or component_id == tile.icon_id) {
+                fire_ha_event("button_click", {
+                  {"page", "home"},
+                  {"command", "short_click"},
+                  {"component", tile.name}
+                });
+                return;
+              }
+            }
 ...
