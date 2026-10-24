@@ -157,7 +157,7 @@ script:
               disp1->send_command_printf("home.button%02d.font=%" PRIu8, i, id(home_custom_buttons_font_id));
             }
 
-            disp1->set_component_font(hmi::home::BT_NOTIFIC.name, id(home_custom_buttons_font_id));
+            // Rounded 2: bt_notific is a status icon in the chip column, it keeps the chip font
             disp1->set_component_font(hmi::home::BT_QRCODE.name, id(home_custom_buttons_font_id));
             disp1->set_component_font(hmi::home::BT_ENTITIES.name, id(home_custom_buttons_font_id));
             blueprint_status_flags.page_home = true;

@@ -75,6 +75,7 @@ script:
           // Update chip-like global components on page home
           disp1->set_component_font(hmi::home::WIFI_ICON.name, new_font);
           disp1->set_component_font(hmi::home::BT_ICON.name,   new_font);
+          disp1->set_component_font(hmi::home::BT_NOTIFIC.name, new_font);  // Rounded 2: in the chip column
 
           // Chips on home are global, so a scoped write both persists the font
           // and updates the live component when home is the visible page.
