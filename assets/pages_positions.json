@@ -1,0 +1,526 @@
+{
+ "positions": {
+  "buttonpage": {
+   "page_label": [
+    22,
+    10,
+    300,
+    30,
+    3,
+    0,
+    1
+   ],
+   "button_back": [
+    406,
+    6,
+    36,
+    36,
+    8,
+    1,
+    1
+   ],
+   "page_index": [
+    177,
+    294,
+    100,
+    20,
+    9,
+    1,
+    1
+   ],
+   "button01pic": [
+    10,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button01": [
+    10,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button01icon": [
+    38,
+    60,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button01text": [
+    14,
+    110,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button01bri": [
+    14,
+    144,
+    93,
+    18,
+    0,
+    1,
+    1
+   ],
+   "button02pic": [
+    121,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button02": [
+    121,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button02icon": [
+    149,
+    60,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button02text": [
+    125,
+    110,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button02bri": [
+    125,
+    144,
+    93,
+    18,
+    0,
+    1,
+    1
+   ],
+   "button03pic": [
+    232,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button03": [
+    232,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button03icon": [
+    260,
+    60,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button03text": [
+    236,
+    110,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button03bri": [
+    236,
+    144,
+    93,
+    18,
+    0,
+    1,
+    1
+   ],
+   "button04pic": [
+    343,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button04": [
+    343,
+    52,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button04icon": [
+    371,
+    60,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button04text": [
+    347,
+    110,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button04bri": [
+    347,
+    144,
+    93,
+    18,
+    0,
+    1,
+    1
+   ],
+   "button05pic": [
+    10,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button05": [
+    10,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button05icon": [
+    38,
+    185,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button05text": [
+    14,
+    235,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button05bri": [
+    14,
+    269,
+    93,
+    18,
+    0,
+    1,
+    1
+   ],
+   "button06pic": [
+    121,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button06": [
+    121,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button06icon": [
+    149,
+    185,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button06text": [
+    125,
+    235,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button06bri": [
+    125,
+    269,
+    93,
+    18,
+    0,
+    1,
+    1
+   ],
+   "button07pic": [
+    232,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button07": [
+    232,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button07icon": [
+    260,
+    185,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button07text": [
+    236,
+    235,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button07bri": [
+    236,
+    269,
+    93,
+    18,
+    0,
+    1,
+    1
+   ],
+   "button08pic": [
+    343,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button08": [
+    343,
+    177,
+    101,
+    115,
+    null,
+    null,
+    null
+   ],
+   "button08icon": [
+    371,
+    185,
+    44,
+    44,
+    8,
+    1,
+    1
+   ],
+   "button08text": [
+    347,
+    235,
+    93,
+    34,
+    0,
+    1,
+    1
+   ],
+   "button08bri": [
+    347,
+    269,
+    93,
+    18,
+    0,
+    1,
+    1
+   ]
+  },
+  "notification": {
+   "notifi_label": [
+    22,
+    10,
+    300,
+    30,
+    3,
+    0,
+    1
+   ],
+   "button_back": [
+    406,
+    6,
+    36,
+    36,
+    8,
+    1,
+    1
+   ],
+   "notifi_text01": [
+    22,
+    60,
+    410,
+    162,
+    3,
+    1,
+    1
+   ],
+   "bt_accept": [
+    30,
+    246,
+    184,
+    56,
+    8,
+    0,
+    1
+   ],
+   "bt_clear": [
+    254,
+    246,
+    182,
+    56,
+    8,
+    0,
+    1
+   ]
+  },
+  "qrcode": {
+   "icon_state": [
+    12,
+    6,
+    36,
+    36,
+    8,
+    1,
+    1
+   ],
+   "page_label": [
+    56,
+    10,
+    300,
+    30,
+    3,
+    0,
+    1
+   ],
+   "button_back": [
+    406,
+    6,
+    36,
+    36,
+    8,
+    1,
+    1
+   ],
+   "qr": [
+    137,
+    91,
+    180,
+    180,
+    null,
+    null,
+    null
+   ]
+  }
+ },
+ "extra": {
+  "notification": {
+   "bt_accept": {
+    "txt": "\"\""
+   },
+   "bt_clear": {
+    "txt": "\"\""
+   },
+   "button_back": {
+    "txt": "\"\""
+   }
+  },
+  "buttonpage": {
+   "button01text": {
+    "txt_maxl": 40
+   },
+   "button02text": {
+    "txt_maxl": 40
+   },
+   "button03text": {
+    "txt_maxl": 40
+   },
+   "button04text": {
+    "txt_maxl": 40
+   },
+   "button05text": {
+    "txt_maxl": 40
+   },
+   "button06text": {
+    "txt_maxl": 40
+   },
+   "button07text": {
+    "txt_maxl": 40
+   },
+   "button08text": {
+    "txt_maxl": 40
+   },
+   "button_back": {
+    "txt": "\"\""
+   }
+  },
+  "qrcode": {
+   "button_back": {
+    "txt": "\"\""
+   }
+  }
+ },
+ "back_pco": 19679
+}
