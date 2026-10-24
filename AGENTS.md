@@ -82,6 +82,7 @@ Patch `rounded2_patch.py`, auf dem Fork `goofy1988/NSPanel-Easy`, Branch `rounde
   verschwanden die Chips, als chip04–07 deckungsgleich auf Platz 1–4 lagen.
 - Ergebnis 24.10. (Rev 14): `Rounded2Project\nspanel_landscape_v2026.10.7_rounded2d.HMI`. Nur die
   Seite home ist geändert, Pillen 10–191 / 262–443, Kreis 202–251.
+- **Nachrücken (Patch 15, `rounded2_patch15.py` + `components/nspanel_easy/button_slots.h`):** Firmware rechnet Button-Seiten-Slots um: `is_buttonpageNN`-Maske (mem command) → lückenlos an TFT, `button`-Render Slot→Position, `confirm`-Bits mit, Klicks Position→Slot. Blueprint und TFT unverändert; Maske 0 = keine Umrechnung.
 - **Home-Hintergrund (Patch 14, `rounded2_patch14.py`):** Seitenobjekt anderer Seiten nur als `home.b[0].pic` ansprechen, `home.pic` geht nur auf home selbst (sonst still verworfen). Firmware bleibt immer Dark, die TFT hat keine Light-Bilder.
 - **Button-Beschriftung (Patch 13, `rounded2_patch13.py`):** Der Nextion richtet mehrzeiligen Text
   als Block aus, nicht je Zeile. Die Firmware rückt kürzere Zeilen mit Leerzeichen ein, deshalb
