@@ -120,7 +120,7 @@ actions:
               timer_state: "{{ states(timer_entity) }}"
               remaining_s: >-
                 {% if timer_state == 'active' %}
-                  {{ [((as_datetime(state_attr(timer_entity, 'finishes_at')) - now()).total_seconds()) | round(0) | int, 0] | max }}
+                  {{ [((as_datetime(state_attr(timer_entity, 'finishes_at')) - now()).total_seconds()) | round(0, 'ceil') | int, 0] | max }}
                 {% elif timer_state == 'paused' %}
                   {% set p = (state_attr(timer_entity, 'remaining') | string).split(':') %}
                   {{ (p[0] | int(0)) * 3600 + (p[1] | int(0)) * 60 + (p[2] | float(0) | int) if p | count == 3 else 0 }}
