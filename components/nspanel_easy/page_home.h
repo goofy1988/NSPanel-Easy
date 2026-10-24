@@ -186,6 +186,13 @@ void home_weather_resolve();
 
 #endif  // NSPANEL_EASY_USE_WEATHER
 
+/**
+ * @brief Rounded 2: set the outdoor temperature font the blueprint asks for.
+ *
+ * Font 6 (72 px) falls back to font 5 (48 px) while the text has more than three characters.
+ */
+void home_outdoor_temp_font(uint8_t font);
+
 #endif  // NSPANEL_EASY_SUBSCRIBE
 
 namespace hmi::home {

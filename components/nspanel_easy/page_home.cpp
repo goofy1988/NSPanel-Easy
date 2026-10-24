@@ -107,6 +107,32 @@ static char outdoor_temp_text[TEMP_TEXT_LEN] = {};
 /// @brief Whether the outdoor temperature component is currently shown.
 static Visibility outdoor_temp_shown = Visibility::UNKNOWN;
 
+/// @brief Rounded 2: the outdoor font the blueprint asked for, and the one last sent.
+static uint8_t outdoor_temp_font_wanted = UINT8_MAX;
+static uint8_t outdoor_temp_font_sent = UINT8_MAX;
+
+/// @brief Rounded 2: 72 px (font 6) holds three characters such as "28°" in the home layout;
+/// a longer text such as "-10°" falls back to 48 px (font 5) instead of losing characters.
+static void home_outdoor_temp_apply_font() {
+  static constexpr uint8_t FONT_72 = 6;
+  static constexpr uint8_t FONT_48 = 5;
+  if (nextion_display == nullptr || outdoor_temp_font_wanted == UINT8_MAX) {
+    return;
+  }
+  const bool wide = strlen(outdoor_temp_text) > 4;  // the degree sign takes two bytes
+  const uint8_t font = (wide && outdoor_temp_font_wanted == FONT_72) ? FONT_48 : outdoor_temp_font_wanted;
+  if (font != outdoor_temp_font_sent) {
+    nextion_display->set_component_font(hmi::home::OUTDOOR_TEMP.name, font);
+    outdoor_temp_font_sent = font;
+  }
+}
+
+void home_outdoor_temp_font(uint8_t font) {
+  outdoor_temp_font_wanted = font;
+  outdoor_temp_font_sent = UINT8_MAX;
+  home_outdoor_temp_apply_font();
+}
+
 /// @brief Whether a disconnection handed the indoor temperature to the embedded sensor.
 static bool indoor_temp_offline = false;
 
@@ -336,7 +362,7 @@ static void home_indoor_temp_render(const char *state) {
 
   indoor_temp_valid = true;
   char text[TEMP_TEXT_LEN];
-  format_temperature(*value, 1, " innen", text, sizeof(text));
+  format_temperature(*value, 1, "", text, sizeof(text));
   if (strcmp(indoor_temp_text, text) == 0) {
     return;  // Nothing changed; avoid a redundant Nextion write
   }
@@ -385,6 +411,7 @@ static void home_outdoor_temp_render(const char *state) {
     if (strcmp(outdoor_temp_text, text) != 0) {
       strncpy(outdoor_temp_text, text, sizeof(outdoor_temp_text) - 1);
       outdoor_temp_text[sizeof(outdoor_temp_text) - 1] = '\0';
+      home_outdoor_temp_apply_font();  // Rounded 2: before the text, so it never shows clipped
       nextion_display->set_component_text(hmi::home::OUTDOOR_TEMP.name, outdoor_temp_text);
     }
   } else {

@@ -164,7 +164,11 @@ script:
             return;
           }
           if (component == "outdoor_temp_font") {  // Outdoor temperature font size
+            #ifdef NSPANEL_EASY_SUBSCRIBE
+            home_outdoor_temp_font(static_cast<uint8_t>(val));  // Rounded 2: falls back to 48 px for "-10°"
+            #else
             disp1->set_component_font(hmi::home::OUTDOOR_TEMP.name, static_cast<uint8_t>(val));
+            #endif  // NSPANEL_EASY_SUBSCRIBE
             return;
           }
 
