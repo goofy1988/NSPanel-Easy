@@ -268,8 +268,21 @@ script:
                 return;
               }
 
+              // Rounded 2: a click on a button page reports the configured slot, not the position
+              std::string component = params[2];
+              const int page_idx = buttonpage_index(page);
+              const int position = buttonpage_slot(component);
+              if (page_idx >= 0 && position >= 0) {
+                const int slot = buttonpage_configured_slot(buttonpage_masks[page_idx], position);
+                if (slot < 0) {
+                  ESP_LOGW("${TAG_HW_DISPLAY}", "%s: nothing shown at %s", page.c_str(), component.c_str());
+                  return;
+                }
+                component = buttonpage_slot_name(slot);
+              }
+
               // A page package may claim the click, e.g. to ask for confirmation
-              if (click_interceptor and click_interceptor(page, event, params[2])) {
+              if (click_interceptor and click_interceptor(page, event, component)) {
                 ESP_LOGD("${TAG_HW_DISPLAY}", "%s handled locally", event.c_str());
                 return;
               }
@@ -279,7 +292,7 @@ script:
               fire_ha_event("button_click", {
                 {"page", page.c_str()},
                 {"command", event.c_str()},
-                {"component", params[2].c_str()}
+                {"component", component.c_str()}
               });
               ESP_LOGV("${TAG_HW_DISPLAY}", "Event sent");
             } else if (page != "button" and

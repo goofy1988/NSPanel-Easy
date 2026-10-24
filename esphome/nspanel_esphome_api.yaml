@@ -139,10 +139,19 @@ api:
         val: int      # New integer value to set for the component. Adjust based on the data type you're displaying.
       then:
         - lambda: |-
+            int32_t value = val;
+            // Rounded 2: the confirm bits of a button page follow the buttons that moved up
+            if (id == "confirm") {
+              const int page_idx = nspanel_easy::buttonpage_index(page.empty() ? current_page->state : page);
+              if (page_idx >= 0) {
+                value = nspanel_easy::buttonpage_compact_bits(nspanel_easy::buttonpage_masks[page_idx],
+                                                              static_cast<uint8_t>(val));
+              }
+            }
             action_component_val->execute(
               page.c_str(),
               id.c_str(),
-              val
+              value
             );
 
     # Hides or shows a specified component on the display.
@@ -353,6 +362,19 @@ script:
           if (page == "mem" && component == "command") {
             for (const auto& cmd : txt_list) {
               if (cmd.empty()) continue;
+              // Rounded 2: configured buttons move up, the TFT only sees the compacted mask
+              if (cmd.size() > 16 && cmd.compare(0, 3, "is_") == 0 && cmd[15] == '=') {
+                const int page_idx = nspanel_easy::buttonpage_index(cmd.substr(3, 12));
+                const auto mask = parse_number<int>(cmd.substr(16));
+                if (page_idx >= 0 && mask.has_value()) {
+                  const uint8_t m = static_cast<uint8_t>(*mask);
+                  nspanel_easy::buttonpage_masks[page_idx] = m;
+                  const uint8_t compact = static_cast<uint8_t>((1U << __builtin_popcount(m)) - 1);
+                  ESP_LOGD("${TAG_API}", "%s: slots 0x%02X shown as 0x%02X", cmd.substr(3, 12).c_str(), m, compact);
+                  action_component_text->execute(page, component, cmd.substr(0, 16) + std::to_string(compact));
+                  continue;
+                }
+              }
               action_component_text->execute(page, component, cmd);
             }
             return;

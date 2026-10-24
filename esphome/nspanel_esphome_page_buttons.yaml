@@ -59,9 +59,22 @@ api:
               return;
             }
 
+            // Rounded 2: configured buttons move up to close the gaps
+            std::string button_name = id.c_str();
+            const int page_idx = buttonpage_index(page.c_str());
+            const int slot = buttonpage_slot(button_name);
+            if (page_idx >= 0 && slot >= 0) {
+              const int position = buttonpage_position(buttonpage_masks[page_idx], slot);
+              if (position < 0) {
+                ESP_LOGW("${TAG_PAGE_BUTTONS}", "%s.%s is not configured, skipping", page.c_str(), id.c_str());
+                return;
+              }
+              button_name = buttonpage_slot_name(position);
+            }
+
             action_button->execute(
               page_id,
-              id.c_str(),
+              button_name.c_str(),
               state,
               icon.c_str(),
               icon_color_rgb565,
