@@ -458,8 +458,11 @@ script:
     then:
       - lambda: |-
           ESP_LOGI("${TAG_HW_DISPLAY}", "Apply theme: %s", background_type->current_option().c_str());
-          current_theme = (background_type->current_option() == "${THEME_LIGHT_LABEL}") ?
-                                                                ThemeMode::LIGHT : ThemeMode::DARK;
+          // Rounded 2: the TFT ships no light-theme pictures, so the panel always stays dark
+          if (background_type->current_option() == "${THEME_LIGHT_LABEL}") {
+            ESP_LOGW("${TAG_HW_DISPLAY}", "Rounded 2 has no light theme, staying dark");
+          }
+          current_theme = ThemeMode::DARK;
           theme_update_all->execute();
       - script.wait: theme_update_all
 
@@ -487,7 +490,8 @@ script:
               "bt_notific", "bt_utilities", "bt_entities", "bt_qrcode",
               "button01", "button02", "button03", "button04", "button05", "button06", "button07"};
           static constexpr uint8_t HOME_BACKGROUND_PIC = 134;
-          disp1->send_command_printf("home.pic=%" PRIu8, HOME_BACKGROUND_PIC);
+          // b[0] is the page object; "home.pic" only resolves while home is the current page
+          disp1->send_command_printf("home.b[0].pic=%" PRIu8, HOME_BACKGROUND_PIC);
           for (const char *name : HOME_CROPPED) {
             disp1->send_command_printf("home.%s.picc=%" PRIu8, name, HOME_BACKGROUND_PIC);
           }
