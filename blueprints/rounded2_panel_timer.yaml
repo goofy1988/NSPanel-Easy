@@ -1,0 +1,131 @@
+blueprint:
+  name: Rounded 2 Panel-Timer
+  description: >-
+    Zeigt einen Timer-Helfer auf der Uhrkarte eines NSPanel Easy mit Rounded-2-Firmware (Patch 10):
+    Restzeit statt Uhrzeit, nach Ablauf blinkt die Karte 1 min rot.
+    Langer Druck auf die Uhr bricht den Timer ab bzw. beendet den Alarm.
+    Den Alarm nach dem Ablauf beendet auch das Event `rounded2_timer_stop` (data: entity_id) für alle Panels.
+    Eine Automation pro Panel.
+  domain: automation
+  author: goofy1988
+  source_url: https://github.com/goofy1988/NSPanel-Easy/blob/rounded2/blueprints/rounded2_panel_timer.yaml
+  homeassistant:
+    min_version: "2024.10.0"
+  input:
+    timer_entity:
+      name: Timer
+      description: Der Timer-Helfer, den das Panel anzeigt.
+      selector:
+        entity:
+          domain: timer
+    panel_device_name:
+      name: Panel
+      description: Der Sensor „Device name“ des Panels (sensor.<panel>_device_name).
+      selector:
+        entity:
+          domain: sensor
+          integration: esphome
+
+mode: queued
+max_exceeded: silent
+
+variables:
+  timer_entity: !input timer_entity
+  panel_sensor: !input panel_device_name
+  panel_name: "{{ states(panel_sensor) }}"
+  timer_action: "esphome.{{ panel_name }}_timer_set"
+
+triggers:
+  - trigger: event
+    id: timer
+    event_type:
+      - timer.started
+      - timer.restarted
+      - timer.paused
+      - timer.cancelled
+      - timer.finished
+    event_data:
+      entity_id: !input timer_entity
+  - trigger: event
+    id: stop
+    event_type: rounded2_timer_stop
+    event_data:
+      entity_id: !input timer_entity
+  - trigger: event
+    id: panel_stop
+    event_type: esphome.nspanel_easy
+    event_data:
+      type: timer
+      action: stop
+  - trigger: state  # panel reconnected (also after an HA restart)
+    id: resync
+    entity_id: !input panel_device_name
+    from: unavailable
+    for:
+      seconds: 20
+
+actions:
+  - choose:
+      - alias: Langer Druck am Panel - Timer abbrechen bzw. Alarm überall beenden
+        conditions:
+          - condition: trigger
+            id: panel_stop
+          - condition: template
+            value_template: "{{ trigger.event.data.device_name == panel_name }}"
+        sequence:
+          - if:
+              - condition: state
+                entity_id: !input timer_entity
+                state: idle
+            then:
+              - event: rounded2_timer_stop
+                event_data:
+                  entity_id: "{{ timer_entity }}"
+            else:
+              - action: timer.cancel
+                target:
+                  entity_id: !input timer_entity
+      - alias: Timer abgelaufen - Alarm
+        conditions:
+          - condition: trigger
+            id: timer
+          - condition: template
+            value_template: "{{ trigger.event.event_type == 'timer.finished' }}"
+        sequence:
+          - action: "{{ timer_action }}"
+            data:
+              state: finished
+              remaining: 0
+      - alias: Abbruch oder Stopp - normale Uhr
+        conditions:
+          - condition: or
+            conditions:
+              - condition: trigger
+                id: stop
+              - condition: template
+                value_template: "{{ trigger.id == 'timer' and trigger.event.event_type == 'timer.cancelled' }}"
+        sequence:
+          - action: "{{ timer_action }}"
+            data:
+              state: idle
+              remaining: 0
+      - alias: Start, Neustart, Pause oder Resync - Zustand senden
+        conditions:
+          - condition: trigger
+            id:
+              - timer
+              - resync
+        sequence:
+          - variables:
+              timer_state: "{{ states(timer_entity) }}"
+              remaining_s: >-
+                {% if timer_state == 'active' %}
+                  {{ [((as_datetime(state_attr(timer_entity, 'finishes_at')) - now()).total_seconds()) | round(0) | int, 0] | max }}
+                {% elif timer_state == 'paused' %}
+                  {% set p = (state_attr(timer_entity, 'remaining') | string).split(':') %}
+                  {{ (p[0] | int(0)) * 3600 + (p[1] | int(0)) * 60 + (p[2] | float(0) | int) if p | count == 3 else 0 }}
+                {% else %}0{% endif %}
+          - action: "{{ timer_action }}"
+            data:
+              state: "{{ timer_state if timer_state in ['active', 'paused'] else 'idle' }}"
+              remaining: "{{ remaining_s | int }}"
