@@ -143,7 +143,9 @@ script:
                                                 ${THEME_PAGE_BUTTONS_LIGHT_PIC_PRESSED} :
                                                 ${THEME_PAGE_BUTTONS_DARK_PIC_PRESSED};
           const uint16_t pic_id = effective_state ? button_pressed_pic_id : button_pic_id;
-          const uint16_t fg_color = effective_state ? Colors::RGB565_BLUE_INDIGO : Colors::RGB565_WHITE;
+          // Rounded 2: the dark pressed card is dark too (picture 47), so the text stays white
+          const uint16_t fg_color = (effective_state and current_theme == ThemeMode::LIGHT) ?
+                                    Colors::RGB565_BLUE_INDIGO : Colors::RGB565_WHITE;
 
           // Pre-build component name strings on the stack
           // Nextion object name limit: 14 chars + NUL = 15
